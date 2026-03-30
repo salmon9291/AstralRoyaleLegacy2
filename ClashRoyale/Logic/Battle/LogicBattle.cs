@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using ClashRoyale.Core.Cluster;
 using ClashRoyale.Extensions;
@@ -1123,6 +1124,45 @@ namespace ClashRoyale.Logic.Battle
             //File.WriteAllText("replay.json", JsonConvert.SerializeObject(Replay));
         }
 
+        private async Task FinishBattle(Player winner, Player loser, int trophies)
+        {
+            if (winner != null)
+            {
+                winner.Home.AddCrowns(3);
+                winner.Home.Arena.AddTrophies(trophies);
+                winner.Home.TotalWins += 1;
+                winner.Home.TotalThreeCrownWins += 1;
+
+                await new BattleResultMessage(winner.Device)
+                {
+                    BattleResultType = 1,
+                    TrophyReward = trophies,
+                    OpponentTrophyReward = -trophies,
+                    OwnCrowns = 0,
+                    OpponentCrowns = 0,
+                }.SendAsync();
+            }
+
+            if (loser != null && loser != winner)
+            {
+                loser.Home.Arena.RemoveTrophies(trophies);
+
+                if (loser.Device.IsConnected)
+                {
+                    await new BattleResultMessage(loser.Device)
+                    {
+                        BattleResultType = 1,
+                        TrophyReward = -trophies,
+                        OpponentTrophyReward = trophies,
+                        OwnCrowns = 0,
+                        OpponentCrowns = 0,
+                    }.SendAsync();
+                }
+            }
+
+            Stop();
+        }
+
         /// <summary>
         ///     Checks wether the battle is over or we have to send sector heartbeat (TCP only)
         /// </summary>
@@ -1147,17 +1187,19 @@ namespace ClashRoyale.Logic.Battle
                             // Normal battle
                             if (!IsFriendly && !IsTournament && !Is2V2)
                             {
-                                player.Home.AddCrowns(3);
-                                player.Home.Arena.AddTrophies(trophies);
+                                var winner = GetOpponentPlayer(player) ?? player; // The opponent is the winner
+                                var loser = player; // The player who stopped responding is the loser
 
-                                await new BattleResultMessage(player.Device)
+                                // Ensure we have distinct players
+                                if (winner == loser)
                                 {
-                                    BattleResultType = 1,
-                                    TrophyReward = trophies,
-                                    OpponentTrophyReward = -trophies,
-                                    OwnCrowns = 0,
-                                    OpponentCrowns = 0,
-                                }.SendAsync();
+                                    loser = this.FirstOrDefault(p => p != null && p.Home.Id != winner.Home.Id) ?? winner;
+                                }
+
+                                await FinishBattle(winner, loser, trophies);
+
+                                // Avoid multiple per-loop handling once battle result has been processed.
+                                break;
                             }
                             // Tournament battle
                             else if (IsTournament)
@@ -1277,17 +1319,16 @@ namespace ClashRoyale.Logic.Battle
             // Normal battle
             if (!IsFriendly && !IsTournament && !Is2V2)
             {
-                player.Home.AddCrowns(3);
-                player.Home.Arena.AddTrophies(trophies);
+                var loser = player;
+                var winner = GetOpponentPlayer(loser) ?? player;
 
-                await new BattleResultMessage(player.Device)
+                if (winner == loser)
                 {
-                    BattleResultType = 1,
-                    TrophyReward = trophies,
-                    OpponentTrophyReward = -trophies,
-                    OwnCrowns = 0,
-                    OpponentCrowns = 0,
-                }.SendAsync();
+                    winner = this.FirstOrDefault(p => p != null && p.Home.Id != loser.Home.Id) ?? loser;
+                }
+
+                await FinishBattle(winner, loser, trophies);
+                return;
             }
             // Tournament battle
             else if (IsTournament)
@@ -1383,6 +1424,11 @@ namespace ClashRoyale.Logic.Battle
             return this.Where(x => x?.Home.Id != userId).ToList();
         }
 
+        public Player GetOpponentPlayer(Player player)
+        {
+            return this.FirstOrDefault(p => p != null && p.Home.Id != player.Home.Id);
+        }
+
         #endregion
 
         #region Objects 
@@ -1392,6 +1438,7 @@ namespace ClashRoyale.Logic.Battle
         public Dictionary<long, Queue<byte[]>> Commands = new Dictionary<long, Queue<byte[]>>();
         public long BattleId { get; set; }
         private DateTime StartTime { get; set; }
+        private bool trophiesSettled;
         public bool Is2V2 { get; set; }
         public bool IsTournament { get; set; }
         public bool IsFriendly { get; set; }
