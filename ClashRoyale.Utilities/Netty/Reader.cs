@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using DotNetty.Buffers;
 
 namespace ClashRoyale.Utilities.Netty
@@ -30,12 +31,30 @@ namespace ClashRoyale.Utilities.Netty
         /// <returns></returns>
         public static int ReadVInt(this IByteBuffer byteBuffer)
         {
-            int b, sign = ((b = byteBuffer.ReadByte()) >> 6) & 1, i = b & 0x3F, offset = 6;
+            if (byteBuffer.ReadableBytes < 1)
+                throw new InvalidOperationException("VInt incompleto: no hay bytes disponibles.");
+
+            int b = byteBuffer.ReadByte();
+            int sign = (b >> 6) & 1;
+            int i = b & 0x3F;
+            int offset = 6;
 
             for (var j = 0; j < 4 && (b & 0x80) != 0; j++, offset += 7)
-                i |= ((b = byteBuffer.ReadByte()) & 0x7F) << offset;
+            {
+                if (byteBuffer.ReadableBytes < 1)
+                    throw new InvalidOperationException("VInt incompleto: byte faltante en continuación.");
 
-            return (b & 0x80) != 0 ? -1 : i | (sign == 1 && offset < 32 ? i | (int) (0xFFFFFFFF << offset) : i);
+                b = byteBuffer.ReadByte();
+                i |= (b & 0x7F) << offset;
+            }
+
+            if ((b & 0x80) != 0)
+                return -1;
+
+            if (sign == 1 && offset < 32)
+                return i | (int)(0xFFFFFFFF << offset);
+
+            return i;
         }
     }
 }

@@ -1319,12 +1319,12 @@ namespace ClashRoyale.Logic.Battle
             // Normal battle
             if (!IsFriendly && !IsTournament && !Is2V2)
             {
-                var loser = player;
-                var winner = GetOpponentPlayer(loser) ?? player;
+                var winner = player;
+                var loser = GetOpponentPlayer(winner) ?? player;
 
                 if (winner == loser)
                 {
-                    winner = this.FirstOrDefault(p => p != null && p.Home.Id != loser.Home.Id) ?? loser;
+                    loser = this.FirstOrDefault(p => p != null && p.Home.Id != winner.Home.Id) ?? winner;
                 }
 
                 await FinishBattle(winner, loser, trophies);

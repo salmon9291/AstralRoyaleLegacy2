@@ -52,6 +52,12 @@ namespace ClashRoyale.Protocol.Messages.Client
 
             for (var i = 0; i < Count; i++)
             {
+                if (Reader.ReadableBytes < 1)
+                {
+                    Logger.Log("EndClientTurnMessage: buffer truncado antes de leer el siguiente comando.", GetType(), ErrorLevel.Warning);
+                    break;
+                }
+
                 var type = Reader.ReadVInt();
 
                 if (type < 500) break;

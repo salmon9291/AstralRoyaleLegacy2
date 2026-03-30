@@ -85,6 +85,8 @@ namespace ClashRoyale.Logic.Home
             Decks = new int[5][];
             for (var i = 0; i < 5; i++) Decks[i] = new int[8];
 
+            PlayerChests = new List<Chest>(); // Inicializar lista vacía para evitar cofres por defecto
+
             Deck.Home = this;
             Deck.Initialize();
 

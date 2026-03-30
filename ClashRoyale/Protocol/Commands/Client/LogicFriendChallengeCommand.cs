@@ -6,6 +6,8 @@ using ClashRoyale.Protocol.Commands.Client;
 using ClashRoyale.Protocol.Messages.Server;
 using ClashRoyale.Utilities.Netty;
 using DotNetty.Buffers;
+using SharpRaven.Data;
+using SharpRaven.Data;
 
 namespace ClashRoyale.Protocol.Commands.Client
 {
@@ -21,21 +23,42 @@ namespace ClashRoyale.Protocol.Commands.Client
 
         public override void Decode()
         {
-            Message = Reader.ReadScString();
-            Reader.ReadBoolean();
+            try
+            {
+                Message = Reader.ReadScString();
 
-            Reader.ReadVInt(); // ClassId
-            GameMode = Reader.ReadVInt(); // InstanceId
+                if (Reader.ReadableBytes < 1) return;
+                Reader.ReadBoolean();
 
-            Reader.ReadVInt();
-            Reader.ReadVInt();
+                if (Reader.ReadableBytes < 1) return;
+                Reader.ReadVInt(); // ClassId
 
-            Reader.ReadVInt();
-            Reader.ReadVInt();
+                if (Reader.ReadableBytes < 1) return;
+                GameMode = Reader.ReadVInt(); // InstanceId
 
-            Reader.ReadVInt();
+                if (Reader.ReadableBytes < 1) return;
+                Reader.ReadVInt();
 
-            Arena = Reader.ReadVInt();
+                if (Reader.ReadableBytes < 1) return;
+                Reader.ReadVInt();
+
+                if (Reader.ReadableBytes < 1) return;
+                Reader.ReadVInt();
+
+                if (Reader.ReadableBytes < 1) return;
+                Reader.ReadVInt();
+
+                if (Reader.ReadableBytes < 1) return;
+                Reader.ReadVInt();
+
+                if (Reader.ReadableBytes < 1) return;
+                Arena = Reader.ReadVInt();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex, GetType(), ErrorLevel.Error);
+                // Paquete corrupto o truncado; se ignora la decodificación.
+            }
         }
 
         public override async void Process()
