@@ -1,4 +1,4 @@
-"Name","FileName","ExportName","ExportNameRed","TopExportName","TopExportNameRed","Category","ValueGems","TID","IconSWF","IconExportName","IsInUse","Type"
+"Name","FileName","ExportNameRed","ExportName","TopExportNameRed","TopExportName","Category","ValueGems","TID","IconSWF","IconExportName","IsInUse","Type"
 "String","String","String","String","String","String","String","int","String","String","String","boolean","String"
 "KingDefault","sc/building_tower.sc","KingTower_blue","KingTower_red",,,,0,"TID_SKIN_DEFAULT","sc/ui.sc","tower_asset_anim","TRUE","King"
 "PrincessDefault","sc/building_tower.sc","StarTower_base_blue","StarTower_base_red","StarTower_top_blue","StarTower_top_red",,0,"TID_SKIN_DEFAULT","sc/ui.sc","tower_asset_anim","TRUE","Princess"
