@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Timers;
 using ClashRoyale.Core.Cluster;
 using ClashRoyale.Extensions;
@@ -249,41 +248,56 @@ namespace ClashRoyale.Logic.Battle
 
             var p = this[0].Home.ExpLevel - 1;
             var e = this[1].Home.ExpLevel - 1;
-
-// Player Right Princess Tower
-            packet.WriteVInt(0); // ID de Dueño (0 para ti)
-            packet.WriteVInt(e); // Nivel
+// Torre 1
+            packet.WriteVInt(e); // Asignado a Player
+            packet.WriteVInt(13);
             packet.WriteVInt(57000); 
             packet.WriteVInt(25500); 
             packet.WriteHex("00007F00C07C0002000000000000");
 
-            // Enemy Left Princess Tower
-            packet.WriteVInt(1); // ID de Dueño (1 para el enemigo)
-            packet.WriteVInt(p); // Nivel
+            // Torre 2
+            packet.WriteVInt(p); // Asignado a Enemy
+            packet.WriteVInt(13);
             packet.WriteVInt(9000); 
             packet.WriteVInt(6500); 
             packet.WriteHex("00007F0080040001000000000000");
 
-            // Player Left Princess Tower
-            packet.WriteVInt(0); // ID de Dueño (0 para ti)
-            packet.WriteVInt(e); // Nivel
+            // Torre 3
+            packet.WriteVInt(p); // Asignado a Enemy
+            packet.WriteVInt(13);
             packet.WriteVInt(57000); 
             packet.WriteVInt(6500); 
-            packet.WriteHex("00007F00C07C0001000000000000");
-
-            // Enemy Right Princess Tower
-            packet.WriteVInt(1); // ID de Dueño (1 para el enemigo)
-            packet.WriteVInt(p); // Nivel
-            packet.WriteVInt(9000); 
-            packet.WriteVInt(25500); 
             packet.WriteHex("00007F0080040002000000000000");
 
-            // Enemy Crown Tower
-            packet.WriteVInt(1); // ID de Dueño (1 para el enemigo)
-            packet.WriteVInt(p); // Nivel
+            // Torre 4
+            packet.WriteVInt(e); // Asignado a Player
+            packet.WriteVInt(13);
+            packet.WriteVInt(9000); 
+            packet.WriteVInt(25500); 
+            packet.WriteHex("00007F00C07C0001000000000000");
+
+            // Torre 5
+            packet.WriteVInt(p); // Asignado a Enemy
+            packet.WriteVInt(13);
             packet.WriteVInt(4000); 
             packet.WriteVInt(16000); 
             packet.WriteHex("00007F0080040000000000000000");
+
+            // Bloque de estado
+            packet.WriteHex("000504077F7D7F0400050401007F7F0000");
+            packet.WriteVInt(0);
+            packet.WriteVInt(6);
+            packet.WriteVInt(0);
+            packet.WriteVInt(0);
+            packet.WriteVInt(0);
+            packet.WriteHex("00007F7F7F7F7F7F7F7F00");
+
+            // Torre 6
+            packet.WriteVInt(e); // Asignado a Player
+            packet.WriteVInt(13);
+            packet.WriteVInt(62000); 
+            packet.WriteVInt(16000); 
+            packet.WriteHex("00007F00C07C0000000000000000");
             packet.WriteHex("00050401047D010400040706007F7F0000");
             packet.WriteVInt(0); // Ms before regen mana
             packet.WriteVInt(6); // Elexir Start Enemy
@@ -356,32 +370,32 @@ namespace ClashRoyale.Logic.Battle
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(57000);
+            packet.WriteVInt(14500);
             packet.WriteVInt(25500);
             packet.WriteHex("00007F00C07C0002000000000000");
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(9000);
+            packet.WriteVInt(3500);
             packet.WriteVInt(6500);
             packet.WriteHex("00007F0080040001000000000000");
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(57000);
-            packet.WriteVInt(6500);
+            packet.WriteVInt(3500);
+            packet.WriteVInt(25500);
             packet.WriteHex("00007F00C07C0001000000000000");
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(9000);
-            packet.WriteVInt(25500);
+            packet.WriteVInt(14500);
+            packet.WriteVInt(6500);
             packet.WriteHex("00007F0080040002000000000000");
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(4000);
-            packet.WriteVInt(16000);
+            packet.WriteVInt(9000);
+            packet.WriteVInt(3000);
             packet.WriteHex("00007F0080040000000000000000");
 
             packet.WriteVInt(0);
@@ -394,8 +408,8 @@ namespace ClashRoyale.Logic.Battle
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(62000);
-            packet.WriteVInt(16000);
+            packet.WriteVInt(9000);
+            packet.WriteVInt(29000);
             packet.WriteHex("00007F00C07C0000000000000000");
 
             packet.WriteVInt(0);
@@ -894,40 +908,42 @@ namespace ClashRoyale.Logic.Battle
 
             var p = this[0].Home.ExpLevel - 1;
             var e = this[1].Home.ExpLevel - 1;
-// Player Right Princess Tower
-            packet.WriteVInt(0); // ID de Dueño (0 para ti)
-            packet.WriteVInt(e); // Nivel
-            packet.WriteVInt(57000); 
-            packet.WriteVInt(25500); 
+
+            // Player Right Princess Tower
+            packet.WriteVInt(e);
+            packet.WriteVInt(13);
+            packet.WriteVInt(14500); // X
+            packet.WriteVInt(25500); // Y
             packet.WriteHex("00007F00C07C0002000000000000");
 
             // Enemy Left Princess Tower
-            packet.WriteVInt(1); // ID de Dueño (1 para el enemigo)
-            packet.WriteVInt(p); // Nivel
-            packet.WriteVInt(9000); 
-            packet.WriteVInt(6500); 
+            packet.WriteVInt(p);
+            packet.WriteVInt(13);
+            packet.WriteVInt(3500); // X
+            packet.WriteVInt(6500); // Y
             packet.WriteHex("00007F0080040001000000000000");
 
             // Player Left Princess Tower
-            packet.WriteVInt(0); // ID de Dueño (0 para ti)
-            packet.WriteVInt(e); // Nivel
-            packet.WriteVInt(57000); 
-            packet.WriteVInt(6500); 
+            packet.WriteVInt(e);
+            packet.WriteVInt(13);
+            packet.WriteVInt(3500); // X
+            packet.WriteVInt(25500); // Y
             packet.WriteHex("00007F00C07C0001000000000000");
 
             // Enemy Right Princess Tower
-            packet.WriteVInt(1); // ID de Dueño (1 para el enemigo)
-            packet.WriteVInt(p); // Nivel
-            packet.WriteVInt(9000); 
-            packet.WriteVInt(25500); 
+            packet.WriteVInt(p);
+            packet.WriteVInt(13);
+            packet.WriteVInt(14500); // X
+            packet.WriteVInt(6500); // Y
             packet.WriteHex("00007F0080040002000000000000");
 
             // Enemy Crown Tower
-            packet.WriteVInt(1); // ID de Dueño (1 para el enemigo)
-            packet.WriteVInt(p); // Nivel
-            packet.WriteVInt(4000); 
-            packet.WriteVInt(16000); 
+            packet.WriteVInt(p);
+            packet.WriteVInt(13);
+            packet.WriteVInt(9000); // X
+            packet.WriteVInt(3000); // Y
             packet.WriteHex("00007F0080040000000000000000");
+
             packet.WriteHex("000504077F7D7F0400050401007F7F0000");
             packet.WriteVInt(0); // Ms before regen mana
             packet.WriteVInt(6); // Mana Start 
@@ -940,8 +956,8 @@ namespace ClashRoyale.Logic.Battle
             // Player Crown Tower
             packet.WriteVInt(e);
             packet.WriteVInt(13);
-            packet.WriteVInt(62000); // X
-            packet.WriteVInt(16000); // Y
+            packet.WriteVInt(9000); // X
+            packet.WriteVInt(29000); // Y
             packet.WriteHex("00007F00C07C0000000000000000");
 
             packet.WriteHex("00050401047D010400040706007F7F0000");
@@ -1016,32 +1032,32 @@ namespace ClashRoyale.Logic.Battle
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(57000);
+            packet.WriteVInt(14500);
             packet.WriteVInt(25500);
             packet.WriteHex("00007F00C07C0002000000000000");
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(9000);
+            packet.WriteVInt(3500);
             packet.WriteVInt(6500);
             packet.WriteHex("00007F0080040001000000000000");
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(57000);
-            packet.WriteVInt(6500);
+            packet.WriteVInt(3500);
+            packet.WriteVInt(25500);
             packet.WriteHex("00007F00C07C0001000000000000");
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(9000);
-            packet.WriteVInt(25500);
+            packet.WriteVInt(14500);
+            packet.WriteVInt(6500);
             packet.WriteHex("00007F0080040002000000000000");
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(4000);
-            packet.WriteVInt(16000);
+            packet.WriteVInt(9000);
+            packet.WriteVInt(3000);
             packet.WriteHex("00007F0080040000000000000000");
 
             packet.WriteVInt(0);
@@ -1054,8 +1070,8 @@ namespace ClashRoyale.Logic.Battle
 
             packet.WriteVInt(0);
             packet.WriteVInt(13);
-            packet.WriteVInt(62000);
-            packet.WriteVInt(16000);
+            packet.WriteVInt(9000);
+            packet.WriteVInt(29000);
             packet.WriteHex("00007F00C07C0000000000000000");
 
             packet.WriteVInt(0);
@@ -1105,45 +1121,6 @@ namespace ClashRoyale.Logic.Battle
             //File.WriteAllText("replay.json", JsonConvert.SerializeObject(Replay));
         }
 
-        private async Task FinishBattle(Player winner, Player loser, int trophies)
-        {
-            if (winner != null)
-            {
-                winner.Home.AddCrowns(3);
-                winner.Home.Arena.AddTrophies(trophies);
-                winner.Home.TotalWins += 1;
-                winner.Home.TotalThreeCrownWins += 1;
-
-                await new BattleResultMessage(winner.Device)
-                {
-                    BattleResultType = 1,
-                    TrophyReward = trophies,
-                    OpponentTrophyReward = -trophies,
-                    OwnCrowns = 0,
-                    OpponentCrowns = 0,
-                }.SendAsync();
-            }
-
-            if (loser != null && loser != winner)
-            {
-                loser.Home.Arena.RemoveTrophies(trophies);
-
-                if (loser.Device.IsConnected)
-                {
-                    await new BattleResultMessage(loser.Device)
-                    {
-                        BattleResultType = 1,
-                        TrophyReward = -trophies,
-                        OpponentTrophyReward = trophies,
-                        OwnCrowns = 0,
-                        OpponentCrowns = 0,
-                    }.SendAsync();
-                }
-            }
-
-            Stop();
-        }
-
         /// <summary>
         ///     Checks wether the battle is over or we have to send sector heartbeat (TCP only)
         /// </summary>
@@ -1168,19 +1145,17 @@ namespace ClashRoyale.Logic.Battle
                             // Normal battle
                             if (!IsFriendly && !IsTournament && !Is2V2)
                             {
-                                var winner = GetOpponentPlayer(player) ?? player; // The opponent is the winner
-                                var loser = player; // The player who stopped responding is the loser
+                                player.Home.AddCrowns(3);
+                                player.Home.Arena.AddTrophies(trophies);
 
-                                // Ensure we have distinct players
-                                if (winner == loser)
+                                await new BattleResultMessage(player.Device)
                                 {
-                                    loser = this.FirstOrDefault(p => p != null && p.Home.Id != winner.Home.Id) ?? winner;
-                                }
-
-                                await FinishBattle(winner, loser, trophies);
-
-                                // Avoid multiple per-loop handling once battle result has been processed.
-                                break;
+                                    BattleResultType = 1,
+                                    TrophyReward = trophies,
+                                    OpponentTrophyReward = -trophies,
+                                    OwnCrowns = 0,
+                                    OpponentCrowns = 0,
+                                }.SendAsync();
                             }
                             // Tournament battle
                             else if (IsTournament)
@@ -1300,16 +1275,17 @@ namespace ClashRoyale.Logic.Battle
             // Normal battle
             if (!IsFriendly && !IsTournament && !Is2V2)
             {
-                var winner = player;
-                var loser = GetOpponentPlayer(winner) ?? player;
+                player.Home.AddCrowns(3);
+                player.Home.Arena.AddTrophies(trophies);
 
-                if (winner == loser)
+                await new BattleResultMessage(player.Device)
                 {
-                    loser = this.FirstOrDefault(p => p != null && p.Home.Id != winner.Home.Id) ?? winner;
-                }
-
-                await FinishBattle(winner, loser, trophies);
-                return;
+                    BattleResultType = 1,
+                    TrophyReward = trophies,
+                    OpponentTrophyReward = -trophies,
+                    OwnCrowns = 0,
+                    OpponentCrowns = 0,
+                }.SendAsync();
             }
             // Tournament battle
             else if (IsTournament)
@@ -1405,11 +1381,6 @@ namespace ClashRoyale.Logic.Battle
             return this.Where(x => x?.Home.Id != userId).ToList();
         }
 
-        public Player GetOpponentPlayer(Player player)
-        {
-            return this.FirstOrDefault(p => p != null && p.Home.Id != player.Home.Id);
-        }
-
         #endregion
 
         #region Objects 
@@ -1419,7 +1390,6 @@ namespace ClashRoyale.Logic.Battle
         public Dictionary<long, Queue<byte[]>> Commands = new Dictionary<long, Queue<byte[]>>();
         public long BattleId { get; set; }
         private DateTime StartTime { get; set; }
-        private bool trophiesSettled;
         public bool Is2V2 { get; set; }
         public bool IsTournament { get; set; }
         public bool IsFriendly { get; set; }
